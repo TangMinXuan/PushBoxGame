@@ -3,8 +3,6 @@ package PushBoxGame2;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -14,16 +12,20 @@ public class GamePanel extends JPanel implements KeyListener{
 	
 	public static GameMap gm;
 	public static Hero hero;
+	public static LinkStack stack;
 	
 	public GamePanel(GameMap gm) {
 		this.gm = gm;
 		hero = new Hero();
+		stack = new LinkStack();
+		stack.initStack();
 	}
 	
 	@Override
 	protected void paintComponent(Graphics g) {
-		
 		super.paintComponent(g);
+		
+		drawGuideText(g);
 		
 		for(int i=0;i<gm.maparr.length;i++) {
 			for(int j=0;j<gm.maparr[i].length;j++) {
@@ -94,6 +96,13 @@ public class GamePanel extends JPanel implements KeyListener{
 		g.setFont(new Font("ËÎÌו", Font.BOLD, 100));
 		g.drawString("You Win !!!", 900, 100);
 	}
+	
+	private void drawGuideText(Graphics g) {
+		g.setColor(Color.red);
+		g.setFont(new Font("ËÎÌו", Font.BOLD, 30));
+		g.drawString("Press W,S,A,D to controll the direct", 900, 100);
+		g.drawString("Press R to restart the level", 900, 150);
+	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -111,10 +120,12 @@ public class GamePanel extends JPanel implements KeyListener{
 			if (judgeLocation(1) == 1) {
 				gm.maparr[i - 1][j] = 3;
 				gm.maparr[i][j] = 0;
+				stack.push(10);
 			} else if (judgeLocation(1) == 2) {
 				gm.maparr[i - 2][j] = 2;
 				gm.maparr[i - 1][j] = 3;
 				gm.maparr[i][j] = 0;
+				stack.push(15);
 			}
 			
 		}
@@ -123,10 +134,12 @@ public class GamePanel extends JPanel implements KeyListener{
 			if(judgeLocation(2) == 1) {
 				gm.maparr[i + 1][j] = 3;
 				gm.maparr[i][j] = 0;
+				stack.push(20);
 			}else if (judgeLocation(2) == 2) {
 				gm.maparr[i + 2][j] = 2;
 				gm.maparr[i + 1][j] = 3;
 				gm.maparr[i][j] = 0;
+				stack.push(25);
 			}
 			
 		}
@@ -135,10 +148,12 @@ public class GamePanel extends JPanel implements KeyListener{
 			if(judgeLocation(3) == 1) {
 				gm.maparr[i][j - 1] = 3;
 				gm.maparr[i][j] = 0;
+				stack.push(30);
 			}else if (judgeLocation(3) == 2) {
 				gm.maparr[i][j - 2] = 2;
 				gm.maparr[i][j - 1] = 3;
 				gm.maparr[i][j] = 0;
+				stack.push(35);
 			}
 			
 		}
@@ -147,19 +162,65 @@ public class GamePanel extends JPanel implements KeyListener{
 			if(judgeLocation(4) == 1) {
 				gm.maparr[i][j + 1] = 3;
 				gm.maparr[i][j] = 0;
+				stack.push(40);
 			} else if (judgeLocation(4) == 2) {
 				gm.maparr[i][j + 2] = 2;
 				gm.maparr[i][j + 1] = 3;
 				gm.maparr[i][j] = 0;
+				stack.push(45);
 			}
 			
 		}
 		if(e.getKeyCode() == KeyEvent.VK_R)
 		{
-			for (int n = 0; n < 8; n++) {
-				for (int m = 0; m < 8; m++) {
-					gm.maparr[n][m] = gm.mapBackUp[n][m];
-				}
+			int n = stack.pop();
+			
+			if(n==10)
+			{
+				gm.maparr[i + 1][j] = 3;
+				gm.maparr[i][j] = 0;
+			}
+			else if(n==15)
+			{
+				gm.maparr[i - 1][j] = 0;
+				gm.maparr[i][j] = 2;
+				gm.maparr[i + 1][j] = 3;
+			}
+			
+			if(n==20)
+			{
+				gm.maparr[i - 1][j] = 3;
+				gm.maparr[i][j] = 0;
+			}
+			else if(n==25)
+			{
+				gm.maparr[i - 1][j] = 3;
+				gm.maparr[i][j] = 2;
+				gm.maparr[i + 1][j] = 0;
+			}
+			
+			if(n==30)
+			{
+				gm.maparr[i][j + 1] = 3;
+				gm.maparr[i][j] = 0;
+			}
+			else if(n==35)
+			{
+				gm.maparr[i][j - 1] = 0;
+				gm.maparr[i][j] = 2;
+				gm.maparr[i][j + 1] = 3;
+			}
+			
+			if(n==40)
+			{
+				gm.maparr[i][j - 1] = 3;
+				gm.maparr[i][j] = 0;
+			}
+			else if(n==45)
+			{
+				gm.maparr[i][j - 1] = 3;
+				gm.maparr[i][j] = 2;
+				gm.maparr[i][j + 1] = 0;
 			}
 		}
 	}
@@ -220,3 +281,8 @@ public class GamePanel extends JPanel implements KeyListener{
 	@Override
 	public void keyTyped(KeyEvent arg0) {}
 }
+//			for (int n = 0; n < 8; n++) {
+//				for (int m = 0; m < 8; m++) {
+//					gm.maparr[n][m] = gm.mapBackUp[n][m];
+//				}
+//			}
